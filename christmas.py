@@ -30,7 +30,10 @@ b.submit('submit')
 
 while True:
   
-  # reload the page using b
+  # reload the page
+  b.reload()
+  # check if there are any service requests
+  presents = find('<p style="font-size:18px">No ResNet Pilikia are currently open. Please check again later.</p>')
   
   # turn off power to usb ports
   if presents == false:
