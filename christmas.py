@@ -33,7 +33,11 @@ while True:
   # reload the page
   b.reload()
   # check if there are any service requests
-  presents = find('<p style="font-size:18px">No ResNet Pilikia are currently open. Please check again later.</p>')
+  try:
+    find('<p style="font-size:18px">No ResNet Pilikia are currently open. Please check again later.</p>')
+  except Exception as e:
+      print e
+      presents = true
   
   # turn off power to usb ports
   if presents == false:
@@ -44,10 +48,12 @@ while True:
     os.system("sudo ./uhubctl -p 2 -a 1")
   
   #test blinking
-  if presents == false:
-    presents = true
-    
-  else:
-    presents = false
   
+  #if presents == false:
+  #  presents = true
+    
+  #else:
+  #  presents = false
+  
+  # maybe just set presents to false at the end of every loop
   time.sleep(5) #sleep for 5 seconds
