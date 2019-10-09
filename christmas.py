@@ -11,6 +11,8 @@
 
 # go <url> -- visit the given URL. The Python function returns the final URL visited, after all redirects.
 
+#http://lists.idyll.org/pipermail/twill/2006-August/000526.html
+
 import time
 import os
 from twill import get_browser
