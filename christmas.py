@@ -20,8 +20,18 @@ from twill.commands import *
 
 presents = false #there are no service requests
 
-while True:
+b = get_browser()
+b.go("https://resnet.hawaii.edu/pilikia/login")
+b.formvalue(1, 'q', username) # might be fv()?
+b.formvalue(2,'q',password)
+b.submit('submit')
+# need to click on the phone button
+#submit()
 
+while True:
+  
+  # reload the page using b
+  
   # turn off power to usb ports
   if presents == false:
     os.system("sudo ./uhubctl -p 2 -a 0")
