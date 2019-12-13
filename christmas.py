@@ -1,59 +1,48 @@
-# when there are no service requests available the website displays
-# "No ResNet Pilikia are currently open. Please check again later."
-# <p style="font-size:18px">No ResNet Pilikia are currently open. Please check again later.</p>
-# twill
-# https://github.com/ctb/twill/blob/master/doc/python-api.txt
-# example
-# http://code.activestate.com/recipes/577465-web-testing-using-twill/
+# Pilikia Status Light
 
-# twill documentation site down
-#https://web.archive.org/web/20181114022639/http://twill.idyll.org/
+# This program runs on a raspberry pi and uses the pilikia api that can be found
+# at https://resnet.hawaii.edu/pilikia/check
+# The API returns a 1 if there is a new request that has no communication or
+# work logs open
 
-# go <url> -- visit the given URL. The Python function returns the final URL visited, after all redirects.
-
-#http://lists.idyll.org/pipermail/twill/2006-August/000526.html
-
+import pycurl
 import time
 import os
-from twill import get_browser
-from twill.commands import *
+from StringIO import StringIO
 
-presents = false #there are no service requests
 
-b = get_browser()
-b.go("https://resnet.hawaii.edu/pilikia/login")
-b.formvalue(1, 'q', username) # might be fv()?
-b.formvalue(2,'q',password)
-b.submit('submit')
-# need to click on the phone button
-#submit()
+while True: # loops around every 5 seconds
+    # curl the pilikia api
 
-while True:
+    url = 'https://resnet.hawaii.edu/pilikia/check'
+    storage = StringIO()
+    c = pycurl.Curl()
+    c.setopt(c.URL, url)
+    c.setopt(c.WRITEFUNCTION, storage.write)
+    c.perform()
+    c.close()
+    content = storage.getvalue()
+    print(content)
 
-  # reload the page
-  b.reload()
-  # check if there are any service requests
-  try:
-    find('<p style="font-size:18px">No ResNet Pilikia are currently open. Please check again later.</p>')
-  except Exception as e:
-      print(e)
-      presents = true
+    presents = content
+    # insert curl for result
+    #try:
+        #presents = curl for result
+    #except Exception as e:
+        #print(e)
+        # change the color of the light to an error light after so many times restart the device
 
-  # turn off power to usb ports
-  if presents == false:
-    os.system("sudo ./uhubctl -p 2 -a 0")
+    # turn off power to the usb ports
+    if presents == "0":
+        print("The grinch is here")
+        #os.system("sudo ./uhubctl -p 2 -a 0") # this is for using christmas tree
 
-  #turn on power to usb ports
-  if presents == true:
-    os.system("sudo ./uhubctl -p 2 -a 1")
+    # turn on power to the usb ports
+    elif presents == "1":
+        print("Its christmas!")
+        #os.system("sudo ./uhubctl -p 2 -a 1") # this is for using christmas tree
 
-  #test blinking
-
-  #if presents == false:
-  #  presents = true
-
-  #else:
-  #  presents = false
-
-  # maybe just set presents to false at the end of every loop
-  time.sleep(5) #sleep for 5 seconds
+    else:
+        print("An error has occured invalid response recieved")
+        # restart the device or change the color of the Light
+    time.sleep(5)
